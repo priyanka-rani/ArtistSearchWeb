@@ -1,0 +1,84 @@
+<div class="container mt-4">
+  <!-- Search Bar -->
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" [(ngModel)]="searchQuery" placeholder="Search for an artist" (keydown.enter)="searchArtists()">
+    <button class="btn btn-primary" (click)="searchArtists()">Search</button>
+    <button class="btn btn-secondary" (click)="clearSearch()">Clear</button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-warning">{{ errorMessage }}</div>
+
+  <!-- Scrollable Result List -->
+  <div class="scroll-container">
+    <div 
+      *ngFor="let artist of artists" 
+      class="card text-white bg-dark me-2 artist-card" 
+      [class.selected]="artist.id === selectedArtistId"
+      (click)="selectArtist(artist)">
+      
+      <img 
+        [src]="artist.image" 
+        class="card-img-top" 
+        [alt]="artist.name" 
+        (error)="artist.image = '/static/images/artsy_logo.svg'"
+      >
+
+      <div class="card-body p-2 text-center" style="background-color: #205375;">
+        <h6 class="card-title mb-0">{{ artist.name }}</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs for Artist Details -->
+  <div *ngIf="selectedArtist" class="mt-4">
+    <div class="btn-group w-100 mb-3" role="group">
+      <button
+        type="button"
+        class="btn"
+        [ngClass]="{ 'btn-primary': activeTab === 'info', 'btn-outline-primary': activeTab !== 'info' }"
+        (click)="activeTab = 'info'">
+        Artist Info
+      </button>
+      <button
+        type="button"
+        class="btn"
+        [ngClass]="{ 'btn-primary': activeTab === 'artworks', 'btn-outline-primary': activeTab !== 'artworks' }"
+        (click)="activeTab = 'artworks'">
+        Artworks
+      </button>
+    </div>
+
+    <!-- Spinner -->
+    <div *ngIf="loadingDetails" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <!-- Artist Info Tab -->
+    <div *ngIf="!loadingDetails && activeTab === 'info'" class="p-3">
+      <h4>{{ selectedArtist.name }}</h4>
+      <p *ngIf="selectedArtist.nationality">{{ selectedArtist.nationality }}</p>
+      <p *ngIf="selectedArtist.birth_year || selectedArtist.death_year">
+        {{ selectedArtist.birth_year || '?' }} - {{ selectedArtist.death_year || '' }}
+      </p>
+      <p>{{ selectedArtist.biography }}</p>
+    </div>
+
+    <!-- Artworks Tab -->
+    <div *ngIf="!loadingDetails && activeTab === 'artworks'" class="p-3">
+      <!-- Artworks content goes here -->
+      <p *ngIf="artworks.length === 0">No artworks found.</p>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div *ngFor="let artwork of artworks" class="col">
+          <div class="card h-100">
+            <img [src]="artwork.image" class="card-img-top" alt="Artwork Image">
+            <div class="card-body">
+              <h5 class="card-title">{{ artwork.title }}</h5>
+              <p class="card-text">{{ artwork.date }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow-sm p-4" style="width: 100%; max-width: 400px;">
+    <h3 class="text-center mb-4">Register</h3>
+
+    <!-- Backend error message -->
+    <div *ngIf="errorMessage" class="alert alert-danger text-center">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm" novalidate>
+      <!-- Full Name -->
+      <div class="mb-3">
+        <label for="fullname" class="form-label">Fullname</label>
+        <input
+          type="text"
+          id="fullname"
+          name="fullname"
+          class="form-control"
+          placeholder="John Doe"
+          required
+          [(ngModel)]="user.fullname"
+          #fullname="ngModel"
+        >
+        <div *ngIf="fullname.invalid && fullname.touched" class="text-danger small mt-1">
+          <div *ngIf="fullname.errors?.['required']">Fullname is required.</div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-control"
+          placeholder="Enter email"
+          required
+          [(ngModel)]="user.email"
+          #email="ngModel"
+        >
+        <div *ngIf="email.invalid && email.touched" class="text-danger small mt-1">
+          <div *ngIf="email.errors?.['required']">Email is required.</div>
+          <div *ngIf="email.errors?.['email']">Invalid email format.</div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control"
+          placeholder="Password"
+          required
+          minlength="6"
+          [(ngModel)]="user.password"
+          #password="ngModel"
+        >
+        <div *ngIf="password.invalid && password.touched" class="text-danger small mt-1">
+          <div *ngIf="password.errors?.['required']">Password is required.</div>
+          <div *ngIf="password.errors?.['minlength']">Minimum 6 characters.</div>
+        </div>
+      </div>
+
+      <!-- Register Button -->
+      <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid || loading">
+        {{ loading ? 'Registering...' : 'Register' }}
+      </button>
+    </form>
+
+    <div class="text-center mt-3">
+      Already have an account?
+      <a routerLink="/login">Login</a>
+    </div>
+  </div>
+</div>

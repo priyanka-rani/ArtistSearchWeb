@@ -1,0 +1,30 @@
+.scroll-container {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 1rem 0;
+}
+
+.artist-card {
+  display: inline-block;
+  width: 200px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.artist-card:hover {
+  background-color: #3a3a3a;
+}
+
+.artist-card.selected {
+  background-color: #E3F2FD !important;
+  color: black !important;
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+.btn-group .btn {
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
