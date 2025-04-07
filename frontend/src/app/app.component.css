@@ -1,6 +1,15 @@
+.nav-link {
+  color: #003366 !important;
+}
 .nav-link.active {
   background-color: #003366 !important;
   color: white !important;
   font-weight: bold;
   border-radius: 999px;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1030; /* above default z-indexes */
 }

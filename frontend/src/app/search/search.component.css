@@ -1,30 +1,104 @@
+/* search.component.css */
 .scroll-container {
-  overflow-x: auto;
   white-space: nowrap;
-  padding: 1rem 0;
+  overflow-x: auto;
 }
-
 .artist-card {
-  display: inline-block;
-  width: 200px;
-  cursor: pointer;
+  background-color: #205375;
+  color: white;
   transition: background-color 0.3s ease;
+  min-width: 160px;
+  cursor: pointer;
+  position: relative;
 }
 
 .artist-card:hover {
-  background-color: #3a3a3a;
-}
-
-.artist-card.selected {
-  background-color: #E3F2FD !important;
-  color: black !important;
+  background-color: #367e9e !important; /* lighter blue */
 }
 
 .card-img-top {
   height: 200px;
   object-fit: cover;
 }
-.btn-group .btn {
-  border-radius: 0.5rem;
+.btn-search {
+  background-color: #205375; /* deep navy */
+  color: white;
+  border: none;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+.btn-clear {
+  background-color: #6c757d; /* gray */
+  color: white;
+  border: none;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.btn-search:disabled {
+  opacity: 0.6;
+}
+.bg-selected-tab {
+  background-color: #205375;
+  border: none;
+  color: white !important;
+}
+
+.bg-transparent-tab {
+  background-color: transparent;
+  border: none; /* ✅ Remove border */
+  color: #205375 !important;
+}
+.tab-button {
+  border-radius: 999px;
   font-weight: 600;
+}
+
+.artist-biography {
+  white-space: pre-line;
+  text-align: justify;
+}
+
+.card:hover {
+  box-shadow: 0 0 0.5rem rgba(32, 83, 117, 0.7);
+  transform: scale(1.01);
+  transition: 0.3s ease-in-out;
+}
+
+.artist-biography {
+  white-space: pre-line;
+  text-align: justify;
+  line-height: 1.6;
+}
+.artwork-card {
+  width: 200px;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.artwork-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.artwork-img-top {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+
+.btn-primary {
+  background-color: #205375;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #163c5f;
 }

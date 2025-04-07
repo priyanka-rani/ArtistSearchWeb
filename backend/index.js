@@ -210,6 +210,121 @@ app.get('/api/artists/:id', async (req, res) => {
   }
 });
 
+// 🎨 Get Categories for an Artwork (Genes)
+app.get('/api/artworks/:artworkId/categories', async (req, res) => {
+  const { artworkId } = req.params;
+
+  try {
+    const token = await getAccessToken();
+    const response = await axios.get(`${BASE_URL}/genes`, {
+      headers: { 'X-XAPP-Token': token },
+      params: { artwork_id: artworkId }
+    });
+
+    const categories = response.data._embedded.genes.map(gene => ({
+      name: gene.name,
+      image: gene._links?.thumbnail?.href || 'images/artsy_logo.svg'
+    }));
+
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error('Error fetching artwork categories:', error.message);
+    res.status(500).json({ error: 'Failed to fetch artwork categories' });
+  }
+});
+// Get Similar Artists
+app.get('/api/artists/:id/similar', async (req, res) => {
+  try {
+    const token = await getAccessToken();
+    const url = `${BASE_URL}/artists?similar_to_artist_id=${req.params.id}&size=10`;
+    const response = await axios.get(url, {
+      headers: { 'X-XAPP-Token': token }
+    });
+
+    const similarArtists = response.data._embedded.artists
+    res.status(200).json(similarArtists);
+  } catch (error) {
+    console.error('Similar artists fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch similar artists' });
+  }
+});
+
+// 🎨 Get Artworks for an Artist
+app.get('/api/artists/:id/artworks', async (req, res) => {
+  const artistId = req.params.id;
+  try {
+    const token = await getAccessToken();
+    const response = await axios.get(`${BASE_URL}/artworks`, {
+      headers: { 'X-XAPP-Token': token },
+      params: {
+        artist_id: artistId,
+        size: 10
+      }
+    });
+
+    const artworks = response.data._embedded.artworks.map((artwork) => ({
+      id: artwork.id,
+      title: artwork.title,
+      date: artwork.date,
+      links: artwork._links
+    }));
+
+    res.status(200).json(artworks);
+  } catch (error) {
+    console.error('Error fetching artworks:', error.message);
+    res.status(500).json({ error: 'Error fetching artworks' });
+  }
+});
+
+// Get all favorites for logged-in user
+app.get('/api/favorites', authenticated, async (req, res) => {
+  const db = client.db('myDatabase');
+  const favorites = db.collection('favorites');
+
+  const results = await favorites.find({ userEmail: req.user.email }).toArray();
+  res.json(results);
+});
+
+// Add an artist to favorites
+app.post('/api/favorites', authenticated, async (req, res) => {
+  const { artistId, name, image, birth, death, nationality, addedAt } = req.body;
+
+  if (!artistId || !name) {
+    return res.status(400).json({ message: 'Artist ID and name are required.' });
+  }
+
+  const db = client.db('myDatabase');
+  const favorites = db.collection('favorites');
+
+  const exists = await favorites.findOne({ userEmail: req.user.email, artistId });
+  if (exists) {
+    return res.status(409).json({ message: 'Already in favorites' });
+  }
+
+  await favorites.insertOne({
+    userEmail: req.user.email,
+    artistId,
+    name,
+    image,
+    birth,
+    death,
+    nationality,
+    addedAt: new Date()
+  });
+
+  res.status(201).json({ message: 'Favorite added' });
+});
+
+
+// Remove an artist from favorites
+app.delete('/api/favorites/:artistId', authenticated, async (req, res) => {
+  const db = client.db('myDatabase');
+  const favorites = db.collection('favorites');
+
+  await favorites.deleteOne({ userEmail: req.user.email, artistId: req.params.artistId });
+  res.status(200).json({ message: 'Favorite removed' });
+});
+
 // Routes
 app.post('/api/register', unauthenticated, registerUser);
 app.post('/api/login', unauthenticated, loginUser);
