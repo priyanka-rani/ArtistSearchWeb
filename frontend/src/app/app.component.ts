@@ -45,4 +45,17 @@ export class AppComponent {
       this.notificationService.show('Logged out', 'success');
     });
   }
+
+  deleteAccount() {
+    this.authService.deleteAccount().subscribe({
+      next: () => {
+        this.notificationService.show('Account deleted', 'danger');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Delete failed:', err);
+        this.notificationService.show('Failed to delete account', 'danger');
+      }
+    });
+  }
 }

@@ -14,17 +14,19 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// JWT middlewares
 function authenticated(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) return res.sendStatus(401);
+  const token = req.cookies.token; // 🔄 Use cookie now
+
+  if (!token) {
+    return res.sendStatus(401);
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
-  } catch {
-    res.sendStatus(403);
+  } catch (err) {
+    return res.sendStatus(403);
   }
 }
 
@@ -49,7 +51,7 @@ async function connectToMongoDB() {
     await client.connect();
     console.log("✅ Connected to MongoDB Atlas!");
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
+    console.error("MongoDB connection error:", error);
   }
 }
 
@@ -69,7 +71,6 @@ async function getAccessToken() {
   }
 }
 
-// 🔐 Register
 async function registerUser(req, res) {
   const { fullName, email, password } = req.body;
 
@@ -102,7 +103,7 @@ async function registerUser(req, res) {
       maxAge: 3600000
     });
 
-    res.status(201).json({ message: 'User registered successfully.' });
+    res.status(201).json({ message: 'User registered successfully.'});
   } catch (error) {
     console.error('Error in register:', error);
     res.status(500).json({ message: 'Server error during registration.' });
@@ -124,27 +125,26 @@ async function loginUser(req, res) {
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(400).json({ message: 'Invalid credentials.' });
+
     const token = jwt.sign(
       { userId: user._id, fullName: user.fullName, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-
     res.cookie('token', token, {
       httpOnly: true,
       sameSite: 'Lax',
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600000
+      maxAge: 3600000 // 1 hour
     });
-
-    res.status(200).json({ message: 'Login successful.' });
+    res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Server error during login.' });
   }
 }
 
-// 🔓 Logout Route
+// Logout Route
 app.post('/api/logout', authenticated, (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
@@ -159,13 +159,21 @@ app.get('/api/profile', authenticated, (req, res) => {
   res.json({ fullName: req.user.fullName, email: req.user.email });
 });
 
-// ❌ Delete Account
+// Delete Account
 app.delete('/api/account', authenticated, async (req, res) => {
   const db = client.db(databaseName);
   const users = db.collection(userCollection);
+  const favorites = db.collection('favorites');
+
+  // Delete the user
   await users.deleteOne({ email: req.user.email });
+
+  // Delete all favorites for this user
+  await favorites.deleteMany({ userEmail: req.user.email });
+
+  // Clear the auth cookie
   res.clearCookie('token');
-  res.sendStatus(200);
+  res.status(200).json({ message: 'Account deleted' });
 });
 
 // 🔍 Search Artists

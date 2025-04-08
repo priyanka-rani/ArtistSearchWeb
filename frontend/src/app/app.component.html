@@ -16,7 +16,8 @@
           <span>{{ userFullName }}</span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><button class="dropdown-item" (click)="logout()">Logout</button></li>
+          <li><button class="dropdown-item text-danger" (click)="deleteAccount()">Delete account</button></li>
+          <li><button class="dropdown-item" (click)="logout()">Log out</button></li>
         </ul>
       </li>
     </ul>

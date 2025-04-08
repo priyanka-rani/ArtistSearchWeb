@@ -1,21 +1,15 @@
-.card {
-    min-height: 200px;
-    border-radius: 1rem;
-    overflow: hidden;
-  }
-  
-  .card-img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
-    filter: blur(2px) brightness(0.7);
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-  }
-  
-  .card-img-overlay {
-    position: relative;
-    z-index: 2;
-  }
+.favorite-card {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.favorite-card .overlay {
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.65); /* ⬅️ increased from 0.5 to 0.65 */
+  height: 100%;
+  width: 100%;
+  color: white;
+}

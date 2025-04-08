@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, of } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 
@@ -9,11 +9,9 @@ interface User {
   email: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = '/api'; // Use proxy
+  private apiUrl = '/api';
   public currentUser$ = new BehaviorSubject<User | null>(null);
   private isBrowser: boolean;
 
@@ -44,7 +42,7 @@ export class AuthService {
       catchError(error => {
         throw new Error(error.error.message || 'Registration failed');
       })
-    );
+      );
   }
 
   login(email: string, password: string) {
@@ -68,11 +66,20 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true });
   }
 
+  deleteAccount(): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/account`, { withCredentials: true }).pipe(
+      tap(() => this.currentUser$.next(null)),
+      catchError(error => {
+        console.error('Delete account failed:', error);
+        return throwError(() => new Error('Account deletion failed'));
+      })
+    );
+  }
+
   private fetchProfile() {
-    this.http.get<User>(`${this.apiUrl}/profile`, { withCredentials: true })
-      .subscribe({
-        next: (user) => this.currentUser$.next(user),
-        error: () => this.currentUser$.next(null)
-      });
+    this.http.get<User>(`${this.apiUrl}/profile`, { withCredentials: true }).subscribe({
+      next: user => this.currentUser$.next(user),
+      error: () => this.currentUser$.next(null)
+    });
   }
 }

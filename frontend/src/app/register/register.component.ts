@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-register',
@@ -22,7 +23,9 @@ export class RegisterComponent {
   loading = false;
   errorMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, 
+    private notificationService:NotificationService,
+    private router: Router) {}
 
   onRegister() {
     this.loading = true;
@@ -31,7 +34,8 @@ export class RegisterComponent {
     this.authService.register(this.user.fullname, this.user.email, this.user.password).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/login']);
+        this.router.navigate(['/search']);
+        this.notificationService.show('User registered successfully.', 'success');
       },
       error: (err) => {
         this.loading = false;

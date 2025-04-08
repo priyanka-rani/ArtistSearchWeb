@@ -9,10 +9,12 @@ import { NotificationService } from '../notification.service';
   selector: 'app-favorites',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './favorites.component.html'
+  templateUrl: './favorites.component.html',
+  styleUrls: ['./favorites.component.css'],
 })
 export class FavoritesComponent implements OnInit {
   favorites: Favorite[] = [];
+  loading = true;
 
   constructor(private favService: FavoritesService,
     private notificationService: NotificationService,
@@ -20,8 +22,8 @@ export class FavoritesComponent implements OnInit {
 
   ngOnInit() {
     this.favService.getFavorites().subscribe(data => {
-      console.log('💡 raw response:', data);
-      this.favorites = data;
+      this.favorites = data.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
+      this.loading = false;
     });
   }
 
