@@ -71,27 +71,11 @@
   text-align: justify;
   line-height: 1.6;
 }
-.artwork-card {
-  width: 200px;
-  height: 350px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background-color: white;
-  overflow: hidden;
-  transition: transform 0.2s ease;
-}
-
-.artwork-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.artwork-img-top {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-bottom: 1px solid #eee;
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .btn-primary {
@@ -101,4 +85,16 @@
 
 .btn-primary:hover {
   background-color: #163c5f;
+}
+
+.card {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+button.btn {
+  border-radius: 0;
+}
+button.btn:hover {
+  background-color: #163c5f;
+  color: white;
 }

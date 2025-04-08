@@ -1,31 +1,32 @@
 <div class="container mt-4">
   <!-- Search Form -->
-<form class="input-group mb-3" (ngSubmit)="searchArtists()">
-  <input
-    type="text"
-    class="form-control"
-    [(ngModel)]="searchQuery"
-    name="search"
-    placeholder="Please enter an artist name."
-    required
-    #searchInput="ngModel"
-  >
+  <form class="input-group mb-3" (ngSubmit)="searchArtists()">
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="searchQuery"
+      name="search"
+      placeholder="Please enter an artist name."
+      required
+      #searchInput="ngModel"
+    />
 
-  <button 
-    class="btn btn-search" 
-    type="submit" 
-    [disabled]="!searchInput.value || loading">
-    Search
-    <span *ngIf="loading" class="spinner-border spinner-border-sm ms-2"></span>
-  </button>
+    <button
+      class="btn btn-search"
+      type="submit"
+      [disabled]="!searchInput.value || loading"
+    >
+      Search
+      <span
+        *ngIf="loading"
+        class="spinner-border spinner-border-sm ms-2"
+      ></span>
+    </button>
 
-  <button 
-    type="button" 
-    class="btn btn-clear" 
-    (click)="clearSearch()">
-    Clear
-  </button>
-</form>
+    <button type="button" class="btn btn-clear" (click)="clearSearch()">
+      Clear
+    </button>
+  </form>
 
   <!-- Error Message -->
   <div *ngIf="errorMessage" class="alert alert-warning">{{ errorMessage }}</div>
@@ -33,38 +34,42 @@
   <!-- Scrollable Artist List -->
   <div class="scroll-container d-flex overflow-auto mb-3">
     <div
-    *ngFor="let artist of artists"
-    class="card artist-card text-white me-2"
-    [class.selected]="artist.id === selectedArtistId"
-    (click)="selectArtist(artist)"
-    [ngClass]="{ 'bg-hover': true }"
-    style="min-width: 160px; position: relative;"
-  >
-    <img
-      [src]="artist.image"
-      class="card-img-top"
-      [alt]="artist.name"
-      (error)="onImageError(artist)"
-    />
-  
-<!-- Favorite Star Top-Right -->
-<button
-  *ngIf="isLoggedIn"
-  class="btn border-0 position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center rounded-circle"
-  (click)="toggleFavorite($event, artist)"
-  style="width: 32px; height: 32px; background-color: #205375; z-index: 2;"
->
-  <i
-    class="bi"
-    [ngClass]="isFavorite(artist.id) ? 'bi-star-fill text-warning' : 'bi-star text-white'"
-    style="font-size: 18px;"
-  ></i>
-</button>
-  
-    <div class="card-body p-2 text-center">
-      <h6 class="card-title mb-0">{{ artist.name }}</h6>
+      *ngFor="let artist of artists"
+      class="card artist-card text-white me-2"
+      [class.selected]="artist.id === selectedArtistId"
+      (click)="selectArtist(artist)"
+      [ngClass]="{ 'bg-hover': true }"
+      style="min-width: 160px; position: relative"
+    >
+      <img
+        [src]="artist.image"
+        class="card-img-top"
+        [alt]="artist.name"
+        (error)="onImageError(artist)"
+      />
+
+      <!-- Favorite Star Top-Right -->
+      <button
+        *ngIf="isLoggedIn"
+        class="btn border-0 position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center rounded-circle"
+        (click)="toggleFavorite($event, artist)"
+        style="width: 32px; height: 32px; background-color: #205375; z-index: 2"
+      >
+        <i
+          class="bi"
+          [ngClass]="
+            isFavorite(artist.id)
+              ? 'bi-star-fill text-warning'
+              : 'bi-star text-white'
+          "
+          style="font-size: 18px"
+        ></i>
+      </button>
+
+      <div class="card-body p-2 text-center">
+        <h6 class="card-title mb-0">{{ artist.name }}</h6>
+      </div>
     </div>
-  </div>
   </div>
 
   <!-- Artist Details Tabs -->
@@ -77,10 +82,11 @@
           'bg-selected-tab': activeTab === 'info',
           'bg-transparent-tab': activeTab !== 'info'
         }"
-        (click)="activeTab = 'info'">
+        (click)="activeTab = 'info'"
+      >
         Artist Info
       </button>
-    
+
       <button
         type="button"
         class="btn w-100 py-2 tab-button"
@@ -88,116 +94,154 @@
           'bg-selected-tab': activeTab === 'artworks',
           'bg-transparent-tab': activeTab !== 'artworks'
         }"
-        (click)="activeTab = 'artworks'">
+        (click)="activeTab = 'artworks'"
+      >
         Artworks
       </button>
     </div>
 
     <!-- Spinner shown while loading artist info or artworks -->
     <div *ngIf="loadingDetails" class="text-center p-4">
-      <div class="spinner-border" role="status" [ngStyle]="{ color: '#205375' }"></div>
+      <div
+        class="spinner-border"
+        role="status"
+        [ngStyle]="{ color: '#205375' }"
+      ></div>
     </div>
 
-<!-- Artist Info Section -->
-<div *ngIf="!loadingDetails && activeTab === 'info'" class="p-3">
+    <!-- Artist Info Section -->
+    <div *ngIf="!loadingDetails && activeTab === 'info'" class="p-3">
+      <!-- Artist Name + Star -->
+      <div class="d-flex align-items-center justify-content-center mb-2">
+        <h3 class="fw-bold me-2 mb-0">{{ selectedArtist.name }}</h3>
 
-  <!-- Artist Name + Star -->
-  <div class="d-flex align-items-center justify-content-center mb-2">
-    <h3 class="fw-bold me-2 mb-0">{{ selectedArtist.name }}</h3>
-    
-    <ng-container *ngIf="isLoggedIn">
-      <i
-        class="bi"
-        [ngClass]="isFavorite(selectedArtist.id) ? 'bi-star-fill text-warning' : 'bi-star'"
-        style="font-size: 1.25rem; cursor: pointer;"
-        (click)="toggleFavorite($event, selectedArtist)">
-      </i>
-    </ng-container>
-  </div>
+        <ng-container *ngIf="isLoggedIn">
+          <i
+            class="bi"
+            [ngClass]="
+              isFavorite(selectedArtist.id)
+                ? 'bi-star-fill text-warning'
+                : 'bi-star'
+            "
+            style="font-size: 1.25rem; cursor: pointer"
+            (click)="toggleFavorite($event, selectedArtist)"
+          >
+          </i>
+        </ng-container>
+      </div>
 
-  <!-- Nationality & Lifespan -->
-  <p class="text-muted text-center">
-    {{ selectedArtist.nationality || '' }}
-    <span *ngIf="selectedArtist.birth_year || selectedArtist.death_year">
-      , {{ selectedArtist.birth_year || '?' }} – {{ selectedArtist.death_year || '' }}
-    </span>
-  </p>
+      <!-- Nationality & Lifespan -->
+      <p class="text-muted text-center">
+        {{ selectedArtist.nationality || "" }}
+        <span *ngIf="selectedArtist.birth_year || selectedArtist.death_year">
+          , {{ selectedArtist.birth_year || "?" }} –
+          {{ selectedArtist.death_year || "" }}
+        </span>
+      </p>
 
-  <!-- Biography -->
-  <div class="artist-biography px-3 text-justify">
-    {{ selectedArtist.biography }}
-  </div>
+      <!-- Biography -->
+      <div class="artist-biography px-3 text-justify">
+        {{ selectedArtist.biography }}
+      </div>
 
- <!-- Similar Artists -->
-<div *ngIf="similarArtists.length > 0" class="mt-4">
-  <h5 class="mb-3">Similar Artists</h5>
-  <div class="scroll-container d-flex overflow-auto">
-    <div 
-      *ngFor="let similar of similarArtists" 
-      class="card artist-card text-white me-2"
-      style="min-width: 160px; cursor: pointer;"
-      (click)="selectArtist(similar)"
-      [class.selected]="similar.id === selectedArtistId">
+      <!-- Similar Artists -->
+      <div *ngIf="similarArtists.length > 0" class="mt-4">
+        <h5 class="mb-3">Similar Artists</h5>
+        <div class="scroll-container d-flex overflow-auto">
+          <div
+            *ngFor="let similar of similarArtists"
+            class="card artist-card text-white me-2"
+            style="min-width: 160px; cursor: pointer"
+            (click)="selectArtist(similar)"
+            [class.selected]="similar.id === selectedArtistId"
+          >
+            <!-- Favorite Star Top-Right -->
+            <button
+              *ngIf="isLoggedIn"
+              class="btn border-0 position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center rounded-circle"
+              (click)="toggleFavorite($event, similar)"
+              style="
+                width: 32px;
+                height: 32px;
+                background-color: #205375;
+                z-index: 2;
+              "
+            >
+              <i
+                class="bi"
+                [ngClass]="
+                  isFavorite(similar.id)
+                    ? 'bi-star-fill text-warning'
+                    : 'bi-star text-white'
+                "
+                style="font-size: 18px"
+              ></i>
+            </button>
 
-      <!-- Favorite Star Top-Right -->
-      <button
-        *ngIf="isLoggedIn"
-        class="btn border-0 position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center rounded-circle"
-        (click)="toggleFavorite($event, similar)"
-        style="width: 32px; height: 32px; background-color: #205375; z-index: 2;"
-      >
-        <i
-          class="bi"
-          [ngClass]="isFavorite(similar.id) ? 'bi-star-fill text-warning' : 'bi-star text-white'"
-          style="font-size: 18px;"
-        ></i>
-      </button>
+            <img
+              [src]="similar.image"
+              class="card-img-top"
+              [alt]="similar.name"
+              (error)="onImageError(similar)"
+            />
 
-      <img 
-        [src]="similar.image" 
-        class="card-img-top" 
-        [alt]="similar.name"
-        (error)="onImageError(similar)" />
-
-        <div class="card-body p-2 text-center">
-          <h6 class="card-title mb-0">{{ similar.name }}</h6>
+            <div class="card-body p-2 text-center">
+              <h6 class="card-title mb-0">{{ similar.name }}</h6>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-  </div>
-</div>
-</div>
 
-<div *ngIf="activeTab === 'artworks'" class="p-3">
-  <div *ngIf="loadingDetails" class="d-flex justify-content-center my-4">
-    <div class="spinner-border text-primary" style="color: #205375;" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
+    <div *ngIf="activeTab === 'artworks'" class="p-3">
+      <div *ngIf="loadingDetails" class="d-flex justify-content-center my-4">
+        <div
+          class="spinner-border text-primary"
+          style="color: #205375"
+          role="status"
+        >
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
 
-<!-- No artworks message -->
-<div *ngIf="!loadingDetails && artworks.length === 0" class="alert alert-danger mt-3 mx-3">
-  No artworks.
-</div>
+      <!-- No artworks message -->
+      <div
+        *ngIf="!loadingDetails && artworks.length === 0"
+        class="alert alert-danger mt-3 mx-3"
+      >
+        No artworks.
+      </div>
 
-<!-- Artworks grid (only shown if artworks exist) -->
-<div *ngIf="artworks.length > 0" class="d-flex flex-wrap gap-3 justify-content-center px-3">
-  <div *ngFor="let artwork of artworks" class="artwork-card border rounded shadow-sm">
-    <img
-      [src]="artwork.image"
-      (error)="artwork.image = 'images/artsy_logo.svg'"
-      [alt]="artwork.title"
-      class="artwork-img-top"
-    />
-    <div class="p-2 text-center">
-      <div class="fw-medium">{{ artwork.title }}, {{ artwork.date }}</div>
+      <!-- Artworks grid (only shown if artworks exist) -->
+      <div class="container mt-4">
+        <div
+          class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
+        >
+          <div class="col" *ngFor="let artwork of artworks">
+            <div class="card h-100 d-flex flex-column">
+              <img
+                [src]="artwork.image"
+                class="card-img-top"
+                alt="{{ artwork.title }}"
+                style="height: 250px; object-fit: cover"
+              />
+
+              <div class="card-body flex-grow-1 px-3 py-3">
+                <p class="fw-medium mb-0">
+                  {{ artwork.title }}, {{ artwork.date }}
+                </p>
+              </div>
+
+              <button
+                class="btn btn-light w-100 rounded-0"
+                (click)="openCategoryModal(artwork)"
+              >
+                View categories
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="text-center mt-auto mb-2 px-2">
-      <button class="btn btn-primary w-100" (click)="openCategoryModal(artwork)">
-        View categories
-      </button>
-    </div>
-  </div>
-</div>
-</div>
   </div>
 </div>
