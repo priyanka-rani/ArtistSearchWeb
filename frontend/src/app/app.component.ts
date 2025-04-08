@@ -7,6 +7,8 @@ import {
   RouterLinkActive
 } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { NotificationComponent } from './notification/notification.component';
+import { NotificationService } from './notification.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +17,8 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     RouterOutlet,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    NotificationComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -24,7 +27,9 @@ export class AppComponent {
   isLoggedIn = false;
   userFullName = '';
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService,
+    private notificationService: NotificationService,
+     private router: Router) {
     this.authService.isLoggedIn$.subscribe(status => {
       this.isLoggedIn = status;
     });
@@ -37,6 +42,7 @@ export class AppComponent {
   logout() {
     this.authService.logout().subscribe(() => {
       this.router.navigate(['/login']);
+      this.notificationService.show('Logged out', 'success');
     });
   }
 }

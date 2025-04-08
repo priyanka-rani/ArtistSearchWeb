@@ -1,51 +1,55 @@
 <div class="d-flex flex-column min-vh-100">
-  <!-- Main content wrapper -->
+  <!-- Navbar -->
   <nav class="navbar navbar-light bg-light px-3 justify-content-between">
-  <a class="navbar-brand fw-normal" href="#">Artist Search</a>
+    <a class="navbar-brand fw-normal" href="#">Artist Search</a>
 
-  <ul class="nav nav-tabs" *ngIf="isLoggedIn; else guestTabs">
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/search" routerLinkActive="active">Search</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/favorites" routerLinkActive="active">Favorites</a>
-    </li>
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://i.pravatar.cc/150?img=3" alt="Profile" class="rounded-circle me-2" style="width: 30px; height: 30px;">
-        <span>{{ userFullName }}</span>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end">
-        <li><button class="dropdown-item" (click)="logout()">Logout</button></li>
-      </ul>
-    </li>
-  </ul>
-
-  <ng-template #guestTabs>
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" *ngIf="isLoggedIn; else guestTabs">
       <li class="nav-item">
         <a class="nav-link" routerLink="/search" routerLinkActive="active">Search</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/login" routerLinkActive="active">Log in</a>
+        <a class="nav-link" routerLink="/favorites" routerLinkActive="active">Favorites</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/register" routerLinkActive="active">Register</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://i.pravatar.cc/150?img=3" alt="Profile" class="rounded-circle me-2" style="width: 30px; height: 30px;">
+          <span>{{ userFullName }}</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><button class="dropdown-item" (click)="logout()">Logout</button></li>
+        </ul>
       </li>
     </ul>
-  </ng-template>
-</nav>
-  
-<main class="container mt-4 pb-5">  <!-- 🛠 add pb-5 here -->
-  <router-outlet></router-outlet>
-</main>
 
-  <!-- Footer fixed at bottom -->
-  <footer class="bg-dark text-white text-center py-2 mt-4 fixed-bottom">
-    <p>
+    <ng-template #guestTabs>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/search" routerLinkActive="active">Search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/login" routerLinkActive="active">Log in</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/register" routerLinkActive="active">Register</a>
+        </li>
+      </ul>
+    </ng-template>
+  </nav>
+
+  <!-- Notifications -->
+  <app-notification />
+
+  <!-- Main Content -->
+  <main class="container my-4 flex-grow-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Sticky Footer -->
+  <footer class="bg-dark text-white text-center py-2">
+    <p class="mb-0">
       Powered by 
-      <a href="https://www.artsy.net">
-        <img src="images/artsy_logo.svg" alt="Footer Logo" style="height: 24px;">
+      <a href="https://www.artsy.net" target="_blank">
+        <img src="images/artsy_logo.svg" alt="Footer Logo" style="height: 24px;" />
       </a>
       <strong>Artsy</strong>
     </p>

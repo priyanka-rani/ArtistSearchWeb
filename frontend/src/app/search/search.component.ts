@@ -6,11 +6,13 @@ import { FavoritesService } from '../favorites.service';
 import { AuthService } from '../auth.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CategoryModalComponent } from '../category-modal/category-modal.component';
+import { NotificationService } from '../notification.service';
+
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbModule, CategoryModalComponent],
+  imports: [CommonModule, FormsModule, NgbModule],
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
@@ -30,6 +32,7 @@ export class SearchComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private favoritesService: FavoritesService,
+    private notificationService: NotificationService,
     private authService: AuthService,
     private modalService: NgbModal
   ) {}
@@ -152,28 +155,55 @@ export class SearchComponent implements OnInit {
   }
 
   addToFavorites(artist: any): void {
+    // If we already have the full artist data, use it directly
+    if (this.selectedArtist?.id === artist.id && this.selectedArtist?.birth_year !== undefined) {
+      this.performAddToFavorites(artist, this.selectedArtist);
+    } else {
+      // Fetch full artist details before saving
+      this.http.get<any>(`/api/artists/${artist.id}`).subscribe({
+        next: (details) => {
+          const fullArtist = {
+            id: details.id,
+            name: details.name,
+            birth_year: details.birthday,
+            death_year: details.deathday,
+            nationality: details.nationality
+          };
+          this.performAddToFavorites(artist, fullArtist);
+        },
+        error: () => {
+          this.notificationService.show('Failed to fetch artist info', 'danger');
+        }
+      });
+    }
+  }
+  
+  private performAddToFavorites(artist: any, details: any): void {
     this.favoritesService.addFavorite({
       artistId: artist.id,
       name: artist.name,
       image: artist.image,
-      timestamp: new Date().toISOString(),
-      birth_year: this.selectedArtist?.birth_year,
-      death_year: this.selectedArtist?.death_year,
-      nationality: this.selectedArtist?.nationality
+      addedAt: new Date().toISOString(),
+      birth_year: details.birth_year,
+      death_year: details.death_year,
+      nationality: details.nationality
     }).subscribe({
       next: () => {
         this.favorites.add(artist.id);
-        alert('Added to favorites!');
+        this.notificationService.show('Added to favorites', 'success');
       },
-      error: (err) => {
-        alert(err.error?.message || 'Error adding to favorites');
+      error: () => {
+        this.notificationService.show('Failed to add to favorites', 'danger');
       }
     });
   }
 
   removeFromFavorites(artistId: string): void {
     this.favoritesService.removeFavorite(artistId).subscribe({
-      next: () => this.favorites.delete(artistId),
+      next: () => {
+        this.favorites.delete(artistId)
+        this.notificationService.show('Removed from favorites', 'danger');
+      },
       error: () => alert('Error removing from favorites')
     });
   }

@@ -11,7 +11,7 @@ async function connectToMongoDB() {
     console.log("Connected to MongoDB Atlas!");
 
     // Database and collection (you can move these operations to other files as well)
-    const database = client.db('myDatabase');
+    const database = client.db('HW3');
     const collection = database.collection('myCollection');
 
     // Insert a document (example)

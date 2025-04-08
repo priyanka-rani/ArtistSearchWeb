@@ -9,7 +9,7 @@ export interface Favorite {
   nationality?: string;
   birth_year?: string;
   death_year?: string;
-  timestamp: string;
+  addedAt: string;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -287,7 +287,7 @@ app.get('/api/favorites', authenticated, async (req, res) => {
 
 // Add an artist to favorites
 app.post('/api/favorites', authenticated, async (req, res) => {
-  const { artistId, name, image, birth, death, nationality, addedAt } = req.body;
+  const { artistId, name, image, birth_year, death_year, nationality, addedAt } = req.body;
 
   if (!artistId || !name) {
     return res.status(400).json({ message: 'Artist ID and name are required.' });
@@ -306,8 +306,8 @@ app.post('/api/favorites', authenticated, async (req, res) => {
     artistId,
     name,
     image,
-    birth,
-    death,
+    birth_year,
+    death_year,
     nationality,
     addedAt: new Date()
   });

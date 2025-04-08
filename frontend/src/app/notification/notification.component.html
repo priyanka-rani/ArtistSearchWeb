@@ -1,0 +1,22 @@
+<div
+  class="toast-container top-0 end-0 p-3 position-fixed"
+  style="z-index: 1055"
+>
+  <div
+    *ngFor="let note of notifications$ | async; let i = index"
+    class="alert d-flex align-items-center justify-content-between fade show mb-2 shadow-sm rounded-3"
+    [ngClass]="{
+      'alert-success': note.type === 'success',
+      'alert-danger': note.type === 'danger'
+    }"
+    role="alert"
+  >
+    <span>{{ note.message }}</span>
+    <button
+    type="button"
+    class="btn-close ms-2"
+    aria-label="Close"
+    (click)="remove(note.id);"
+  ></button>
+  </div>
+</div>
