@@ -70,6 +70,13 @@ async function getAccessToken() {
     throw error;
   }
 }
+const crypto = require('crypto');
+
+function generateGravatarUrl(email) {
+  const trimmed = email.trim().toLowerCase();
+  const hash = crypto.createHash('sha1').update(trimmed).digest('hex');
+  return `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+}
 
 async function registerUser(req, res) {
   const { fullName, email, password } = req.body;
@@ -86,7 +93,8 @@ async function registerUser(req, res) {
     if (existingUser) return res.status(400).json({ message: 'Email already exists.' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = { fullName, email, password: hashedPassword };
+    const gravatarUrl = generateGravatarUrl(email);
+    const newUser = { fullName, email, password: hashedPassword, avatar: gravatarUrl  };
 
     const result = await users.insertOne(newUser);
 
@@ -155,8 +163,19 @@ app.post('/api/logout', authenticated, (req, res) => {
 });
 
 // 🧾 Profile
-app.get('/api/profile', authenticated, (req, res) => {
-  res.json({ fullName: req.user.fullName, email: req.user.email });
+app.get('/api/profile', authenticated, async (req, res) => {
+  const db = client.db(databaseName);
+  const users = db.collection(userCollection);
+
+  const user = await users.findOne({ email: req.user.email });
+
+  if (!user) return res.sendStatus(404);
+
+  res.json({
+    fullName: user.fullName,
+    email: user.email,
+    avatar: user.avatar || null
+  });
 });
 
 // Delete Account

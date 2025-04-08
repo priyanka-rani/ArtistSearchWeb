@@ -12,12 +12,21 @@
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="https://i.pravatar.cc/150?img=3" alt="Profile" class="rounded-circle me-2" style="width: 30px; height: 30px;">
-          <span>{{ userFullName }}</span>
+          <img [src]="userAvatarUrl" class="rounded-circle me-2" style="width: 30px; height: 30px;" alt="Profile" />
+        <span>{{ userFullName }}</span>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><button class="dropdown-item text-danger" (click)="deleteAccount()">Delete account</button></li>
-          <li><button class="dropdown-item" (click)="logout()">Log out</button></li>
+        <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
+          <li>
+            <button class="dropdown-item text-danger fw-semibold" (click)="deleteAccount()">
+              Delete account
+            </button>
+          </li>
+          <li class="dropdown-divider my-1"></li>
+          <li>
+            <button class="dropdown-item text-primary fw-medium" (click)="logout()">
+              Log out
+            </button>
+          </li>
         </ul>
       </li>
     </ul>

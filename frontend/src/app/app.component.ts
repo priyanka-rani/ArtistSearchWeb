@@ -26,6 +26,7 @@ import { NotificationService } from './notification.service';
 export class AppComponent {
   isLoggedIn = false;
   userFullName = '';
+  userAvatarUrl = '';
 
   constructor(private authService: AuthService,
     private notificationService: NotificationService,
@@ -36,6 +37,7 @@ export class AppComponent {
 
     this.authService.currentUser$.subscribe(user => {
       this.userFullName = user?.fullName || '';
+      this.userAvatarUrl = user?.avatar || 'fallback.png';
     });
   }
 

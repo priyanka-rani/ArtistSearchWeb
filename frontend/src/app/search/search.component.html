@@ -53,7 +53,7 @@
         *ngIf="isLoggedIn"
         class="btn border-0 position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center rounded-circle"
         (click)="toggleFavorite($event, artist)"
-        style="width: 32px; height: 32px; background-color: #205375; z-index: 2"
+        style="width: 32px; height: 32px; background-color: #174c8b; z-index: 2"
       >
         <i
           class="bi"
@@ -105,7 +105,7 @@
       <div
         class="spinner-border"
         role="status"
-        [ngStyle]="{ color: '#205375' }"
+        [ngStyle]="{ color: '#174c8b' }"
       ></div>
     </div>
 
@@ -163,7 +163,7 @@
               style="
                 width: 32px;
                 height: 32px;
-                background-color: #205375;
+                background-color: #174c8b;
                 z-index: 2;
               "
             >
@@ -197,7 +197,7 @@
       <div *ngIf="loadingDetails" class="d-flex justify-content-center my-4">
         <div
           class="spinner-border text-primary"
-          style="color: #205375"
+          style="color: #174c8b"
           role="status"
         >
           <span class="visually-hidden">Loading...</span>

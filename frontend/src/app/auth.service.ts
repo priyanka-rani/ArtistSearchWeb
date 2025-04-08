@@ -7,6 +7,7 @@ import { PLATFORM_ID } from '@angular/core';
 interface User {
   fullName: string;
   email: string;
+  avatar: string;
 }
 
 @Injectable({ providedIn: 'root' })

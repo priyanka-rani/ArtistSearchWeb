@@ -12,8 +12,11 @@
   position: relative;
 }
 
-.artist-card:hover {
-  background-color: #367e9e !important; /* lighter blue */
+.artist-card:hover,
+.artist-card:active,
+.artist-card:focus,
+.artist-card.selected  {
+  background-color: #174c8b !important; /* lighter blue */
 }
 
 .card-img-top {
@@ -21,7 +24,7 @@
   object-fit: cover;
 }
 .btn-search {
-  background-color: #205375; /* deep navy */
+  background-color: #174c8b; /* deep navy */
   color: white;
   border: none;
   border-top-left-radius: 0.5rem;
@@ -40,7 +43,7 @@
   opacity: 0.6;
 }
 .bg-selected-tab {
-  background-color: #205375;
+  background-color: #174c8b;
   border: none;
   color: white !important;
 }
@@ -48,7 +51,7 @@
 .bg-transparent-tab {
   background-color: transparent;
   border: none; /* ✅ Remove border */
-  color: #205375 !important;
+  color: #174c8b !important;
 }
 .tab-button {
   border-radius: 999px;
@@ -79,7 +82,7 @@
 }
 
 .btn-primary {
-  background-color: #205375;
+  background-color: #174c8b;
   border: none;
 }
 
