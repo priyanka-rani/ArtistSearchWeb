@@ -43,7 +43,7 @@ export class AppComponent {
 
   logout() {
     this.authService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/search']);
       this.notificationService.show('Logged out', 'success');
     });
   }

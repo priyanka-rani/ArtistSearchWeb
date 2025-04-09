@@ -1,49 +1,70 @@
 <div class="d-flex flex-column min-vh-100">
   <!-- Navbar -->
-  <nav class="navbar navbar-light bg-light px-3 justify-content-between">
+  <nav class="navbar navbar-expand-md navbar-light bg-light px-3">
     <a class="navbar-brand fw-normal" href="#">Artist Search</a>
+  
+    <!-- Hamburger button (for small screens) -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <!-- Collapsible Nav Items -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+      <ul class="navbar-nav" *ngIf="isLoggedIn; else guestTabs">
+        <li class="nav-item">
+          <a class="nav-link ps-2" routerLink="/search" routerLinkActive="active">Search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link ps-2" routerLink="/favorites" routerLinkActive="active">Favorites</a>
+        </li>
+        <div class="w-100 d-flex justify-content-center mt-2 mt-lg-0">
 
-    <ul class="nav nav-tabs" *ngIf="isLoggedIn; else guestTabs">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/search" routerLinkActive="active">Search</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/favorites" routerLinkActive="active">Favorites</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img [src]="userAvatarUrl" class="rounded-circle me-2" style="width: 30px; height: 30px;" alt="Profile" />
-        <span>{{ userFullName }}</span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
-          <li>
-            <button class="dropdown-item text-danger fw-medium" (click)="deleteAccount()">
-              Delete account
-            </button>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle d-flex align-items-center ps-2"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <img
+              [src]="userAvatarUrl"
+              alt="Profile"
+              class="rounded-circle me-2"
+              style="width: 30px; height: 30px"
+            />
+            <span>{{ userFullName }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><button class="dropdown-item text-danger" (click)="deleteAccount()">Delete account</button></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><button class="dropdown-item" (click)="logout()">Log out</button></li>
+          </ul>
+        </li>
+        </div>
+      </ul>
+  
+      <ng-template #guestTabs>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link ps-2" routerLink="/search" routerLinkActive="active">Search</a>
           </li>
-          <li class="dropdown-divider my-1"></li>
-          <li>
-            <button class="dropdown-item text-primary fw-medium" (click)="logout()">
-              Log out
-            </button>
+          <li class="nav-item">
+            <a class="nav-link ps-2" routerLink="/login" routerLinkActive="active">Log in</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link ps-2" routerLink="/register" routerLinkActive="active">Register</a>
           </li>
         </ul>
-      </li>
-    </ul>
-
-    <ng-template #guestTabs>
-      <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/search" routerLinkActive="active">Search</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login" routerLinkActive="active">Log in</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/register" routerLinkActive="active">Register</a>
-        </li>
-      </ul>
-    </ng-template>
+      </ng-template>
+    </div>
   </nav>
 
   <!-- Notifications -->

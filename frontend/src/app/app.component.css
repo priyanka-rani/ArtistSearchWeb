@@ -29,6 +29,11 @@
 .custom-dropdown .dropdown-item:hover {
   background-color: #f8f9fa;
 }
+.dropdown-menu {
+  min-width: auto !important;
+  width: max-content;
+  padding: 0.25rem 0.5rem;
+}
 .dropdown-divider {
   margin: 0 !important;
   border-top: 1px solid #dee2e6; /* Light gray line */
