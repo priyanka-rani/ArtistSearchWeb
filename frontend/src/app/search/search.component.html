@@ -221,15 +221,14 @@
           class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
         >
           <div class="col" *ngFor="let artwork of artworks">
-            <div class="card h-100 d-flex flex-column">
+            <div class="card d-flex flex-column">
               <img
                 [src]="artwork.image"
-                class="card-img-top"
+                class="artist-card-img-top"
                 alt="{{ artwork.title }}"
-                style="height: 250px; object-fit: cover"
               />
 
-              <div class="card-body flex-grow-1 px-3 py-3">
+              <div class="artist-card-body flex-grow-1 px-3 py-3">
                 <p class="fw-medium mb-0">
                   {{ artwork.title }}, {{ artwork.date }}
                 </p>

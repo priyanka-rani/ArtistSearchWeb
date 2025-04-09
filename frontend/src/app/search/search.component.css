@@ -116,3 +116,11 @@ button.btn:hover {
   background-color: #163c5f;
   color: white;
 }
+.artist-card-img-top {
+  max-height: 300px;
+  width: 100%;
+  object-fit: cover;
+}
+.artist-card-body {
+  padding: 1rem;
+}
