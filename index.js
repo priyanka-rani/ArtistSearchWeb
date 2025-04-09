@@ -61,7 +61,7 @@ async function connectToMongoDB() {
 
 // Get Artsy API Token
 const fs = require('fs');
-const tokenCachePath = path.join(__dirname, 'tokenCache.json');
+const tokenCachePath = path.join('/tmp', 'tokenCache.json');
 
 async function getAccessToken() {
   const now = new Date();

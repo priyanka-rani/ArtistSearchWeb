@@ -5,4 +5,3 @@ dist/
 frontend/dist/
 node_modules/
 frontend/node_modules/
-tokenCache.json
