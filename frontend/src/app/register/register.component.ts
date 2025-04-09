@@ -22,14 +22,17 @@ export class RegisterComponent {
 
   loading = false;
   errorMessage = '';
+  backendErrorField = '';
+  backendErrorMessage = '';
 
-  constructor(private authService: AuthService, 
-    private notificationService:NotificationService,
-    private router: Router) {}
 
+  constructor(private authService: AuthService,
+    private notificationService: NotificationService,
+    private router: Router) { }
   onRegister() {
     this.loading = true;
-    this.errorMessage = '';
+    this.backendErrorField = '';
+    this.backendErrorMessage = '';
 
     this.authService.register(this.user.fullname, this.user.email, this.user.password).subscribe({
       next: () => {
@@ -39,7 +42,15 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.message || 'Registration failed.';
+
+        // Optional: Parse server message to identify field
+        if (err.message.includes('exists')) {
+          this.backendErrorField = 'email';
+          this.backendErrorMessage = 'User with this email already exists.';
+        } else {
+          this.backendErrorField = 'fullname'; // fallback
+          this.backendErrorMessage = err.message || 'Registration failed.';
+        }
       }
     });
   }
