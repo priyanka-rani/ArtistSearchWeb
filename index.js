@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'dist/frontend')));
 
 
 function authenticated(req, res, next) {
-  const token = req.cookies.token; // 🔄 Use cookie now
+  const token = req.cookies.token;
 
   if (!token) {
     return res.sendStatus(401);
@@ -60,7 +60,20 @@ async function connectToMongoDB() {
 }
 
 // Get Artsy API Token
+const fs = require('fs');
+const tokenCachePath = path.join(__dirname, 'tokenCache.json');
+
 async function getAccessToken() {
+  const now = new Date();
+
+  if (fs.existsSync(tokenCachePath)) {
+    const data = JSON.parse(fs.readFileSync(tokenCachePath, 'utf-8'));
+
+    if (data.token && new Date(data.expires_at) > now) {
+      return data.token; // Return cached token
+    }
+  }
+
   try {
     const response = await axios.post(`${BASE_URL}/tokens/xapp_token`, null, {
       params: {
@@ -68,12 +81,24 @@ async function getAccessToken() {
         client_secret: clientSecret
       }
     });
-    return response.data.token;
+
+    const newToken = response.data.token;
+    const expiresAt = new Date(response.data.expires_at);
+
+    // Step 3: Write new token to file
+    fs.writeFileSync(tokenCachePath, JSON.stringify({
+      token: newToken,
+      expires_at: expiresAt.toISOString()
+    }));
+
+    console.log('New Artsy token fetched and cached.');
+    return newToken;
   } catch (error) {
-    console.error('Error getting Artsy token:', error);
+    console.error('Error fetching Artsy token:', error.message);
     throw error;
   }
 }
+
 const crypto = require('crypto');
 
 function generateGravatarUrl(email) {
@@ -122,7 +147,7 @@ async function registerUser(req, res) {
   }
 }
 
-// 🔐 Login
+// Login
 async function loginUser(req, res) {
   const { email, password } = req.body;
 
@@ -198,7 +223,7 @@ app.delete('/api/account', authenticated, async (req, res) => {
   res.status(200).json({ message: 'Account deleted' });
 });
 
-// 🔍 Search Artists
+// Search Artists
 app.get('/api/search', async (req, res) => {
   const query = req.query.query;
   if (!query) return res.status(400).json({ error: 'Query is required' });
@@ -225,7 +250,7 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// 🎨 Get Artist Details
+// Get Artist Details
 app.get('/api/artists/:id', async (req, res) => {
   try {
     const token = await getAccessToken();
@@ -240,7 +265,7 @@ app.get('/api/artists/:id', async (req, res) => {
   }
 });
 
-// 🎨 Get Categories for an Artwork (Genes)
+// Get Categories for an Artwork (Genes)
 app.get('/api/artworks/:artworkId/categories', async (req, res) => {
   const { artworkId } = req.params;
 
@@ -279,7 +304,7 @@ app.get('/api/artists/:id/similar', async (req, res) => {
   }
 });
 
-// 🎨 Get Artworks for an Artist
+// Get Artworks for an Artist
 app.get('/api/artists/:id/artworks', async (req, res) => {
   const artistId = req.params.id;
   try {
@@ -368,4 +393,4 @@ app.get(/(.*)/, (req, res) => {
 // Start Server
 connectToMongoDB();
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
