@@ -78,7 +78,9 @@ export class AuthService {
   }
 
   private fetchProfile() {
-    this.http.get<User>(`${this.apiUrl}/profile`, { withCredentials: true }).subscribe({
+    this.http.get<User>(`${this.apiUrl}/me`, {
+      withCredentials: true
+    }).subscribe({
       next: user => this.currentUser$.next(user),
       error: () => this.currentUser$.next(null)
     });

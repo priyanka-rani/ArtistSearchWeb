@@ -162,11 +162,10 @@ app.post('/api/logout', authenticated, (req, res) => {
   return res.status(200).json({ message: 'Logged out successfully' });
 });
 
-// 🧾 Profile
-app.get('/api/profile', authenticated, async (req, res) => {
+// /api/me - returns current user if authenticated
+app.get('/api/me', authenticated, async (req, res) => {
   const db = client.db(databaseName);
   const users = db.collection(userCollection);
-
   const user = await users.findOne({ email: req.user.email });
 
   if (!user) return res.sendStatus(404);
