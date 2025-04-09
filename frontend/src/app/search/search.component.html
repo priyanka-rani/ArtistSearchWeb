@@ -35,20 +35,20 @@
   <div class="scroll-container d-flex overflow-auto mb-3">
     <div
       *ngFor="let artist of artists"
-      class="card artist-card text-white me-2"
+      class="card artist-card text-white me-2 flex-shrink-0"
       [class.selected]="artist.id === selectedArtistId"
       (click)="selectArtist(artist)"
       [ngClass]="{ 'bg-hover': true }"
-      style="min-width: 160px; position: relative"
+      style="width: 200px; position: relative"
     >
+      <!-- Artist Image -->
       <img
         [src]="artist.image"
         class="card-img-top"
         [alt]="artist.name"
         (error)="onImageError(artist)"
       />
-
-      <!-- Favorite Star Top-Right -->
+      <!-- Favorite Star -->
       <button
         *ngIf="isLoggedIn"
         class="btn border-0 position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center rounded-circle"
@@ -65,9 +65,12 @@
           style="font-size: 18px"
         ></i>
       </button>
-
-      <div class="card-body p-2 text-center">
-        <h6 class="card-title mb-0">{{ artist.name }}</h6>
+  
+      <!-- Artist Name -->
+      <div class="card-body p-2 text-center d-flex align-items-center justify-content-center">
+        <h6 class="card-title mb-0 artist-name" [attr.title]="artist.name">
+          {{ artist.name }}
+        </h6>
       </div>
     </div>
   </div>
