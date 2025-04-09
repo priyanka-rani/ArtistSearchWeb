@@ -20,12 +20,14 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
+  errorField: 'email' | 'password' | null = null;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onLogin() {
     this.loading = true;
     this.errorMessage = '';
+    this.errorField = null;
 
     this.authService.login(this.user.email, this.user.password).subscribe({
       next: () => {
@@ -34,7 +36,15 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.message || 'Login failed';
+        const message = err.message || 'Login failed';
+        this.errorMessage = message;
+
+        // Simple field inference (adjust based on backend errors if structured differently)
+        if (message.toLowerCase().includes('email')) {
+          this.errorField = 'email';
+        } else if (message.toLowerCase().includes('password')) {
+          this.errorField = 'password';
+        }
       }
     });
   }

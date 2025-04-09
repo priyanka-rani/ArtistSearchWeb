@@ -53,11 +53,10 @@
   border: none; /* ✅ Remove border */
   color: #174c8b !important;
 }
-.tab-button {
-  border-radius: 999px;
-  font-weight: 600;
+.bg-transparent-tab:hover {
+  background-color: transparent !important;
+  color: #174c8b !important;
 }
-
 .artist-biography {
   white-space: pre-line;
   text-align: justify;

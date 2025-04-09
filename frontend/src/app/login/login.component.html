@@ -1,9 +1,9 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<div class="container d-flex justify-content-center pt-5">
   <div class="card shadow-sm p-4" style="width: 100%; max-width: 400px;">
-    <h3 class="text-center mb-4">Login</h3>
+    <h3 class="mb-4">Login</h3>
 
-    <!-- Error message -->
-    <div *ngIf="errorMessage" class="alert alert-danger text-center">
+    <!-- Global error message (e.g. from backend) -->
+    <div *ngIf="errorMessage && !errorField" class="alert alert-danger text-center mb-3">
       {{ errorMessage }}
     </div>
 
@@ -18,12 +18,17 @@
           class="form-control"
           placeholder="Enter email"
           required
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
           [(ngModel)]="user.email"
           #email="ngModel"
-        >
-        <div *ngIf="email.invalid && email.touched" class="text-danger small mt-1">
+          [class.is-invalid]="(email.invalid && email.touched) || errorField === 'email'"
+        />
+        <div *ngIf="email.touched && email.errors" class="invalid-feedback d-block">
           <div *ngIf="email.errors?.['required']">Email is required.</div>
-          <div *ngIf="email.errors?.['email']">Invalid email format.</div>
+          <div *ngIf="email.errors?.['pattern']">Email must be valid.</div>
+        </div>
+        <div *ngIf="errorField === 'email'" class="invalid-feedback d-block">
+          {{ errorMessage }}
         </div>
       </div>
 
@@ -37,26 +42,26 @@
           class="form-control"
           placeholder="Password"
           required
-          minlength="6"
           [(ngModel)]="user.password"
           #password="ngModel"
-        >
-        <div *ngIf="password.invalid && password.touched" class="text-danger small mt-1">
+          [class.is-invalid]="(password.invalid && password.touched) || errorField === 'password'"
+        />
+        <div *ngIf="password.touched && password.errors" class="invalid-feedback d-block">
           <div *ngIf="password.errors?.['required']">Password is required.</div>
-          <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</div>
+        </div>
+        <div *ngIf="errorField === 'password'" class="invalid-feedback d-block">
+          {{ errorMessage }}
         </div>
       </div>
 
-      <!-- Submit Button -->
+      <!-- Submit -->
       <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid || loading">
-        {{ loading ? 'Logging in...' : 'Login' }}
+        {{ loading ? 'Logging in...' : 'Log in' }}
       </button>
     </form>
 
-    <!-- Switch to Register -->
     <div class="text-center mt-3">
-      Don't have an account?
-      <a routerLink="/register">Register</a>
+      Don’t have an account yet? <a routerLink="/register">Register</a>
     </div>
   </div>
 </div>
