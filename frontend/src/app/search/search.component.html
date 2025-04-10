@@ -32,7 +32,7 @@
   <div *ngIf="errorMessage" class="alert alert-warning">{{ errorMessage }}</div>
 
   <!-- Scrollable Artist List -->
-  <div class="scroll-container d-flex overflow-auto mb-3">
+  <div class="scroll-container d-flex overflow-auto">
     <div
       *ngFor="let artist of artists"
       class="card artist-card text-white me-2 flex-shrink-0"
@@ -149,7 +149,7 @@
       <!-- Similar Artists -->
       <div *ngIf="isLoggedIn && similarArtists.length > 0">
         <h5 class="mb-3">Similar Artists</h5>
-        <div class="scroll-container d-flex overflow-auto mb-3">
+        <div class="scroll-container d-flex overflow-auto">
           <div
             *ngFor="let artist of similarArtists"
             class="card artist-card text-white me-2 flex-shrink-0"

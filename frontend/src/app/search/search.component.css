@@ -2,7 +2,7 @@
 .scroll-container {
   white-space: nowrap;
   overflow-x: auto;
-  padding-bottom: 1rem;
+  padding-bottom: 0.5rem;
   padding-right: 0.5rem;
 }
 .artist-card {
