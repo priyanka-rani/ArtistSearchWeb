@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { interval, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FavoritesService, Favorite } from '../favorites.service';
@@ -13,10 +14,10 @@ import { SelectedArtistService } from '../selected-artist.service';
   templateUrl: './favorites.component.html',
   styleUrls: ['./favorites.component.css'],
 })
-export class FavoritesComponent implements OnInit {
+export class FavoritesComponent implements OnInit, OnDestroy {
   favorites: Favorite[] = [];
   loading = true;
-  private intervalId: any;
+  private timerSub!: Subscription;
 
   constructor(private favService: FavoritesService,
     private notificationService: NotificationService,
@@ -30,8 +31,10 @@ export class FavoritesComponent implements OnInit {
       this.favorites = data.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
       this.loading = false;
     });
-    // Auto-refresh the relative time every minute
-    this.intervalId = setInterval(() => this.cdr.detectChanges(), 60000);
+    
+    this.timerSub = interval(1000).subscribe(() => {
+      this.favorites = [...this.favorites];
+    });
   }
 
   remove(artistId: string, event: MouseEvent) {
@@ -53,8 +56,8 @@ export class FavoritesComponent implements OnInit {
     if (!timestamp || isNaN(Date.parse(timestamp))) return '';
 
     const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-    const secondsAgo = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
-    if (!isFinite(secondsAgo)) return '';
+    const diff = Date.now() - new Date(timestamp).getTime();
+    const secondsAgo = Math.floor(diff / 1000);
 
     if (secondsAgo < 60) return rtf.format(-secondsAgo, 'second');
     const minutesAgo = Math.floor(secondsAgo / 60);
@@ -64,8 +67,9 @@ export class FavoritesComponent implements OnInit {
     const daysAgo = Math.floor(hoursAgo / 24);
     return rtf.format(-daysAgo, 'day');
   }
-
+  
   ngOnDestroy() {
-    clearInterval(this.intervalId);
+    if (this.timerSub) this.timerSub.unsubscribe();
   }
+
 }
