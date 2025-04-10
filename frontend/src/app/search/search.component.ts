@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,8 @@ import { AuthService } from '../auth.service';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CategoryModalComponent } from '../category-modal/category-modal.component';
 import { NotificationService } from '../notification.service';
-
+import { Router } from '@angular/router';
+import { SelectedArtistService } from '../selected-artist.service';
 
 @Component({
   selector: 'app-search',
@@ -16,7 +17,7 @@ import { NotificationService } from '../notification.service';
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, AfterViewInit {
   searchQuery: string = '';
   artists: any[] = [];
   loading: boolean = false;
@@ -28,14 +29,16 @@ export class SearchComponent implements OnInit {
   activeTab: string = 'info';
   favorites: Set<string> = new Set();
   isLoggedIn: boolean = false;
+  similarArtists: any[] = [];
 
   constructor(
     private http: HttpClient,
     private favoritesService: FavoritesService,
     private notificationService: NotificationService,
     private authService: AuthService,
-    private modalService: NgbModal
-  ) {}
+    private modalService: NgbModal,
+    private selectedArtistService: SelectedArtistService
+  ) { }
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe(status => {
@@ -43,6 +46,13 @@ export class SearchComponent implements OnInit {
       if (status) this.loadFavorites();
       else this.favorites.clear();
     });
+  }
+  ngAfterViewInit(): void {
+    const artistId = this.selectedArtistService.get();
+    if (artistId) {
+      this.selectArtist(artistId);
+      this.selectedArtistService.clear();
+    }
   }
 
   searchArtists(): void {
@@ -65,8 +75,8 @@ export class SearchComponent implements OnInit {
             id: artist.id,
             name: artist.name,
             image: artist.links?.thumbnail?.href && artist.links.thumbnail.href !== '/assets/shared/missing_image.png'
-            ? artist.links.thumbnail.href
-            : 'images/artsy_logo.svg'          
+              ? artist.links.thumbnail.href
+              : 'images/artsy_logo.svg'
           }));
         }
         this.loading = false;
@@ -88,15 +98,15 @@ export class SearchComponent implements OnInit {
     this.similarArtists = [];
   }
 
-  selectArtist(artist: any): void {
-    this.selectedArtistId = artist.id;
+  selectArtist(artistId: string): void {
+    this.selectedArtistId = artistId;
     this.selectedArtist = null;
     this.artworks = [];
     this.similarArtists = [];
     this.activeTab = 'info';
     this.loadingDetails = true;
 
-    this.http.get<any>(`/api/artists/${artist.id}`).subscribe({
+    this.http.get<any>(`/api/artists/${artistId}`).subscribe({
       next: (data) => {
         this.selectedArtist = {
           id: data.id,
@@ -107,7 +117,7 @@ export class SearchComponent implements OnInit {
           death_year: data.deathday
         };
         this.loadingDetails = false;
-        this.fetchSimilarArtists(artist.id);
+        this.fetchSimilarArtists(artistId);
       },
       error: () => {
         this.selectedArtist = null;
@@ -116,15 +126,15 @@ export class SearchComponent implements OnInit {
       }
     });
 
-    this.http.get<any[]>(`/api/artists/${artist.id}/artworks`).subscribe({
+    this.http.get<any[]>(`/api/artists/${artistId}/artworks`).subscribe({
       next: (data) => {
         this.artworks = data.map((artwork: any) => ({
           id: artwork.id,
           title: artwork.title,
           date: artwork.date,
           image: artwork.links?.thumbnail?.href && artwork.links.thumbnail.href !== '/assets/shared/missing_image.png'
-          ? artwork.links.thumbnail.href
-          : 'images/artsy_logo.svg'    
+            ? artwork.links.thumbnail.href
+            : 'images/artsy_logo.svg'
         }));
       },
       error: () => {
@@ -132,7 +142,6 @@ export class SearchComponent implements OnInit {
       }
     });
   }
-  similarArtists: any[] = [];
 
   private fetchSimilarArtists(artistId: string): void {
     this.http.get<any[]>(`/api/artists/${artistId}/similar`).subscribe({
@@ -144,8 +153,8 @@ export class SearchComponent implements OnInit {
           death_year: artist.deathday,
           nationality: artist.nationality,
           image: artist._links?.thumbnail?.href && artist._links.thumbnail.href !== '/assets/shared/missing_image.png'
-          ? artist._links.thumbnail.href
-          : 'images/artsy_logo.svg'
+            ? artist._links.thumbnail.href
+            : 'images/artsy_logo.svg'
         }));
       },
       error: () => {
@@ -155,11 +164,9 @@ export class SearchComponent implements OnInit {
   }
 
   addToFavorites(artist: any): void {
-    // If we already have the full artist data, use it directly
     if (this.selectedArtist?.id === artist.id && this.selectedArtist?.birth_year !== undefined) {
       this.performAddToFavorites(artist, this.selectedArtist);
     } else {
-      // Fetch full artist details before saving
       this.http.get<any>(`/api/artists/${artist.id}`).subscribe({
         next: (details) => {
           const fullArtist = {
@@ -177,7 +184,7 @@ export class SearchComponent implements OnInit {
       });
     }
   }
-  
+
   private performAddToFavorites(artist: any, details: any): void {
     this.favoritesService.addFavorite({
       artistId: artist.id,
@@ -201,7 +208,7 @@ export class SearchComponent implements OnInit {
   removeFromFavorites(artistId: string): void {
     this.favoritesService.removeFavorite(artistId).subscribe({
       next: () => {
-        this.favorites.delete(artistId)
+        this.favorites.delete(artistId);
         this.notificationService.show('Removed from favorites', 'danger');
       },
       error: () => alert('Error removing from favorites')
@@ -236,7 +243,8 @@ export class SearchComponent implements OnInit {
     const modalRef = this.modalService.open(CategoryModalComponent, { size: 'lg' });
     modalRef.componentInstance.artwork = artwork;
   }
+
   onImageError(artist: any): void {
-    artist.image = 'images/artsy_logo.svg'; // or '/static/images/artsy_logo.svg' depending on your setup
+    artist.image = 'images/artsy_logo.svg';
   }
 }

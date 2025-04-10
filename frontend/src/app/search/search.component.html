@@ -37,7 +37,7 @@
       *ngFor="let artist of artists"
       class="card artist-card text-white me-2 flex-shrink-0"
       [class.selected]="artist.id === selectedArtistId"
-      (click)="selectArtist(artist)"
+      (click)="selectArtist(artist.id)"
       [ngClass]="{ 'bg-hover': true }"
       style="width: 200px; position: relative"
     >
@@ -75,8 +75,17 @@
     </div>
   </div>
 
+
+    <!-- Spinner shown while loading artist info or artworks -->
+    <div *ngIf="loadingDetails" class="text-center p-4">
+      <div
+        class="spinner-border"
+        role="status"
+        [ngStyle]="{ color: '#174c8b' }"
+      ></div>
+    </div>
   <!-- Artist Details Tabs -->
-  <div *ngIf="selectedArtist" class="mt-4">
+  <div *ngIf="!loadingDetails && selectedArtist" class="mt-4">
     <div class="d-flex mb-3 gap-3">
       <button
         type="button"
@@ -102,16 +111,6 @@
         Artworks
       </button>
     </div>
-
-    <!-- Spinner shown while loading artist info or artworks -->
-    <div *ngIf="loadingDetails" class="text-center p-4">
-      <div
-        class="spinner-border"
-        role="status"
-        [ngStyle]="{ color: '#174c8b' }"
-      ></div>
-    </div>
-
     <!-- Artist Info Section -->
     <div *ngIf="!loadingDetails && activeTab === 'info'" class="p-3">
       <!-- Artist Name + Star -->
@@ -155,7 +154,7 @@
             *ngFor="let similar of similarArtists"
             class="card artist-card text-white me-2"
             style="min-width: 160px; cursor: pointer"
-            (click)="selectArtist(similar)"
+            (click)="selectArtist(similar.id)"
             [class.selected]="similar.id === selectedArtistId"
           >
             <!-- Favorite Star Top-Right -->

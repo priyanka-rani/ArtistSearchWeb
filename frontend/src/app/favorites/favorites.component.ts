@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FavoritesService, Favorite } from '../favorites.service';
-import { Observable } from 'rxjs';
 import { NotificationService } from '../notification.service';
+import { ChangeDetectorRef } from '@angular/core';
+import { SelectedArtistService } from '../selected-artist.service';
 
 @Component({
   selector: 'app-favorites',
@@ -15,9 +16,13 @@ import { NotificationService } from '../notification.service';
 export class FavoritesComponent implements OnInit {
   favorites: Favorite[] = [];
   loading = true;
+  private intervalId: any;
 
   constructor(private favService: FavoritesService,
     private notificationService: NotificationService,
+    private selectedArtistService: SelectedArtistService,
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -25,13 +30,23 @@ export class FavoritesComponent implements OnInit {
       this.favorites = data.sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
       this.loading = false;
     });
+    // Auto-refresh the relative time every minute
+    this.intervalId = setInterval(() => this.cdr.detectChanges(), 60000);
   }
 
-  remove(artistId: string) {
+  remove(artistId: string, event: MouseEvent) {
+    event.stopPropagation();
     this.favService.removeFavorite(artistId).subscribe(() => {
       this.favorites = this.favorites.filter(f => f.artistId !== artistId);
       this.notificationService.show('Removed from favorites', 'danger');
     });
+  }
+
+  navigateToDetails(artistId: string, event: MouseEvent) {
+    if ((event.target as HTMLElement).closest('button')) return;
+      
+    this.selectedArtistService.set(artistId);
+    this.router.navigate(['/']);
   }
 
   formatRelativeTime(timestamp: string): string {
@@ -39,11 +54,18 @@ export class FavoritesComponent implements OnInit {
 
     const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
     const secondsAgo = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
-
-    if (!isFinite(secondsAgo)) return ''; // extra safety
+    if (!isFinite(secondsAgo)) return '';
 
     if (secondsAgo < 60) return rtf.format(-secondsAgo, 'second');
     const minutesAgo = Math.floor(secondsAgo / 60);
-    return rtf.format(-minutesAgo, 'minute');
+    if (minutesAgo < 60) return rtf.format(-minutesAgo, 'minute');
+    const hoursAgo = Math.floor(minutesAgo / 60);
+    if (hoursAgo < 24) return rtf.format(-hoursAgo, 'hour');
+    const daysAgo = Math.floor(hoursAgo / 24);
+    return rtf.format(-daysAgo, 'day');
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
   }
 }
