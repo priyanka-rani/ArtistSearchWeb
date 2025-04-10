@@ -166,10 +166,10 @@ async function loginUser(req, res) {
     const users = db.collection(userCollection);
 
     const user = await users.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials.' });
+    if (!user) return res.status(400).json({ message: 'Password or email is incorrect.' });
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(400).json({ message: 'Invalid credentials.' });
+    if (!valid) return res.status(400).json({ message: 'Password or email is incorrect.' });
 
     const token = jwt.sign(
       { userId: user._id, fullName: user.fullName, email: user.email },

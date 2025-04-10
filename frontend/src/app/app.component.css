@@ -43,4 +43,5 @@ footer {
   bottom: 0;
   width: 100%;
   z-index: 1030; /* above default z-indexes */
+  background-color: #1a2e45;
 }

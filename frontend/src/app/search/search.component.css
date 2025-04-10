@@ -2,9 +2,11 @@
 .scroll-container {
   white-space: nowrap;
   overflow-x: auto;
+  padding-bottom: 1rem;
+  padding-right: 0.5rem;
 }
 .artist-card {
-  background-color: #205375;
+  background-color: #1a2e45;
   color: white;
   transition: background-color 0.3s ease;
   min-width: 160px;

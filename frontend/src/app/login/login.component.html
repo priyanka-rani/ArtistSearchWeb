@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-center pt-5">
+<div class="container d-flex flex-column align-items-center pt-5">
   <div class="card shadow-sm p-4" style="width: 100%; max-width: 400px;">
     <h3 class="mb-4">Login</h3>
 
@@ -59,9 +59,9 @@
         {{ loading ? 'Logging in...' : 'Log in' }}
       </button>
     </form>
+  </div>
 
-    <div class="text-center mt-3">
-      Don’t have an account yet? <a routerLink="/register">Register</a>
-    </div>
+  <div class="text-center mt-3">
+    Don’t have an account yet? <a routerLink="/register">Register</a>
   </div>
 </div>

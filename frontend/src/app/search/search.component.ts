@@ -117,7 +117,9 @@ export class SearchComponent implements OnInit, AfterViewInit {
           death_year: data.deathday
         };
         this.loadingDetails = false;
-        this.fetchSimilarArtists(artistId);
+        if (this.isLoggedIn) {
+          this.fetchSimilarArtists(artistId);
+        }
       },
       error: () => {
         this.selectedArtist = null;

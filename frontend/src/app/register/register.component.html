@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-center mt-5 mb-5">
+<div class="container d-flex flex-column align-items-center mt-5 mb-5">
   <div class="card shadow-sm p-4" style="width: 100%; max-width: 400px">
     <h3 class="text-center mb-4">Register</h3>
 
@@ -6,6 +6,7 @@
     <div *ngIf="errorMessage" class="alert alert-danger text-center">
       {{ errorMessage }}
     </div>
+
     <form (ngSubmit)="onRegister()" #registerForm="ngForm" novalidate>
       <!-- Full Name -->
       <div class="mb-3">
@@ -93,10 +94,10 @@
         {{ loading ? "Registering..." : "Register" }}
       </button>
     </form>
+  </div>
 
-    <!-- Login Redirect -->
-    <div class="text-center mt-3">
-      Already have an account? <a routerLink="/login">Login</a>
-    </div>
+  <!-- Login Redirect -->
+  <div class="text-center mt-3">
+    Already have an account? <a routerLink="/login">Login</a>
   </div>
 </div>

@@ -50,7 +50,8 @@ export class LoginComponent {
         // Simple field inference (adjust based on backend errors if structured differently)
         if (message.toLowerCase().includes('email')) {
           this.errorField = 'email';
-        } else if (message.toLowerCase().includes('password')) {
+        } 
+        if (message.toLowerCase().includes('password')) {
           this.errorField = 'password';
         }
       }

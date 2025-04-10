@@ -147,48 +147,47 @@
       </div>
 
       <!-- Similar Artists -->
-      <div *ngIf="similarArtists.length > 0" class="mt-4">
+      <div *ngIf="isLoggedIn && similarArtists.length > 0">
         <h5 class="mb-3">Similar Artists</h5>
-        <div class="scroll-container d-flex overflow-auto">
+        <div class="scroll-container d-flex overflow-auto mb-3">
           <div
-            *ngFor="let similar of similarArtists"
-            class="card artist-card text-white me-2"
-            style="min-width: 160px; cursor: pointer"
-            (click)="selectArtist(similar.id)"
-            [class.selected]="similar.id === selectedArtistId"
+            *ngFor="let artist of similarArtists"
+            class="card artist-card text-white me-2 flex-shrink-0"
+            [class.selected]="artist.id === selectedArtistId"
+            (click)="selectArtist(artist.id)"
+            [ngClass]="{ 'bg-hover': true }"
+            style="width: 200px; position: relative"
           >
-            <!-- Favorite Star Top-Right -->
+            <!-- Artist Image -->
+            <img
+              [src]="artist.image"
+              class="card-img-top"
+              [alt]="artist.name"
+              (error)="onImageError(artist)"
+            />
+            <!-- Favorite Star -->
             <button
               *ngIf="isLoggedIn"
               class="btn border-0 position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center rounded-circle"
-              (click)="toggleFavorite($event, similar)"
-              style="
-                width: 32px;
-                height: 32px;
-                background-color: #174c8b;
-                z-index: 2;
-              "
+              (click)="toggleFavorite($event, artist)"
+              style="width: 32px; height: 32px; background-color: #174c8b; z-index: 2"
             >
               <i
                 class="bi"
                 [ngClass]="
-                  isFavorite(similar.id)
+                  isFavorite(artist.id)
                     ? 'bi-star-fill text-warning'
                     : 'bi-star text-white'
                 "
                 style="font-size: 18px"
               ></i>
             </button>
-
-            <img
-              [src]="similar.image"
-              class="card-img-top"
-              [alt]="similar.name"
-              (error)="onImageError(similar)"
-            />
-
-            <div class="card-body p-2 text-center">
-              <h6 class="card-title mb-0">{{ similar.name }}</h6>
+        
+            <!-- Artist Name -->
+            <div class="card-body p-2 text-center d-flex align-items-center justify-content-center">
+              <h6 class="card-title mb-0 artist-name" [attr.title]="artist.name">
+                {{ artist.name }}
+              </h6>
             </div>
           </div>
         </div>
