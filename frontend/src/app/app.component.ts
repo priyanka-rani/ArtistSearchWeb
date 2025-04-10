@@ -28,14 +28,17 @@ export class AppComponent {
   userFullName = '';
   userAvatarUrl = '';
 
-  constructor(private authService: AuthService,
+  constructor(protected authService: AuthService,
     private notificationService: NotificationService,
      private router: Router) {
+  }
+  ngOnInit(){
     this.authService.isLoggedIn$.subscribe(status => {
       this.isLoggedIn = status;
     });
 
     this.authService.currentUser$.subscribe(user => {
+      this.isLoggedIn = !!user;
       this.userFullName = user?.fullName || '';
       this.userAvatarUrl = user?.avatar || 'fallback.png';
     });
@@ -43,7 +46,7 @@ export class AppComponent {
 
   logout() {
     this.authService.logout().subscribe(() => {
-      this.router.navigate(['/search']);
+      this.router.navigate(['/']);
       this.notificationService.show('Logged out', 'success');
     });
   }
@@ -52,7 +55,7 @@ export class AppComponent {
     this.authService.deleteAccount().subscribe({
       next: () => {
         this.notificationService.show('Account deleted', 'danger');
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Delete failed:', err);

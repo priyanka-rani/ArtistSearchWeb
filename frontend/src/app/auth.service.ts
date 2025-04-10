@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
+import { Router } from '@angular/router';
+import { NotificationService } from './notification.service';
 
 interface User {
   fullName: string;
@@ -15,8 +17,11 @@ export class AuthService {
   private apiUrl = '/api';
   public currentUser$ = new BehaviorSubject<User | null>(null);
   private isBrowser: boolean;
+  private sessionExpiredShown = false;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+    private router: Router,
+    private notificationService: NotificationService) {
     const platformId = inject(PLATFORM_ID);
     this.isBrowser = isPlatformBrowser(platformId);
 
@@ -31,31 +36,29 @@ export class AuthService {
   }
 
   register(fullName: string, email: string, password: string) {
+    this.resetSessionFlag();
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/register`,
       { fullName, email, password },
       { withCredentials: true }
     ).pipe(
-      map(res => {
-        this.fetchProfile();
-        return res;
-      }),
+      switchMap(() => this.fetchProfile()),
       catchError(error => {
         throw new Error(error.error.message || 'Registration failed');
       })
-      );
+    );
   }
 
+
   login(email: string, password: string) {
+    this.resetSessionFlag();
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/login`,
       { email, password },
       { withCredentials: true }
     ).pipe(
-      map(() => {
-        this.fetchProfile();
-        return true;
-      }),
+      switchMap(() => this.fetchProfile()),
+      map(() => true),
       catchError(error => {
         throw new Error(error.error.message || 'Login failed');
       })
@@ -77,12 +80,36 @@ export class AuthService {
     );
   }
 
-  private fetchProfile() {
-    this.http.get<User>(`${this.apiUrl}/me`, {
+  public loading$ = new BehaviorSubject<boolean>(true); // 🔄 New loading state
+
+  fetchProfile(): Observable<User | null> {
+    return this.http.get<User>(`${this.apiUrl}/me`, {
       withCredentials: true
-    }).subscribe({
-      next: user => this.currentUser$.next(user),
-      error: () => this.currentUser$.next(null)
-    });
+    }).pipe(
+      tap(user => {
+        this.currentUser$.next(user);
+        this.loading$.next(false);
+      }),
+      catchError(() => {
+        this.currentUser$.next(null);
+        this.loading$.next(false);
+        return of(null);
+      })
+    );
+  }
+
+  handleSessionExpiration() {
+    if (!this.isBrowser) return;
+    if (!this.sessionExpiredShown) {
+      this.sessionExpiredShown = true;
+      this.currentUser$.next(null);
+      this.notificationService.show('Session expired. You have been logged out.', 'danger');
+      this.router.navigate(['/']);
+    }
+  }
+
+  // Reset the flag on successful login or register
+  resetSessionFlag() {
+    this.sessionExpiredShown = false;
   }
 }

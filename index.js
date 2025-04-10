@@ -35,8 +35,16 @@ function authenticated(req, res, next) {
 }
 
 function unauthenticated(req, res, next) {
-  if (req.cookies.token) return res.status(403).json({ message: 'Already logged in' });
-  next();
+  const token = req.cookies.token;
+  if (!token) return next();
+
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+    return res.status(403).json({ message: 'Already logged in' });
+  } catch (err) {
+    // token is invalid/expired → allow access
+    return next();
+  }
 }
 
 // Config

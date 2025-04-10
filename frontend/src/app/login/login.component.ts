@@ -24,6 +24,14 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.router.navigate(['/']); // redirect to root
+      }
+    });
+  }
+
   onLogin() {
     this.loading = true;
     this.errorMessage = '';
@@ -32,7 +40,7 @@ export class LoginComponent {
     this.authService.login(this.user.email, this.user.password).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/search']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.loading = false;

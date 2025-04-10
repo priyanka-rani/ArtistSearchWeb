@@ -26,9 +26,15 @@ export class RegisterComponent {
   backendErrorMessage = '';
 
 
-  constructor(private authService: AuthService,
-    private notificationService: NotificationService,
-    private router: Router) { }
+  constructor(private authService: AuthService, private notificationService: NotificationService, private router: Router) { }
+
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.router.navigate(['/']);
+      }
+    });
+  }
   onRegister() {
     this.loading = true;
     this.backendErrorField = '';
@@ -37,7 +43,7 @@ export class RegisterComponent {
     this.authService.register(this.user.fullname, this.user.email, this.user.password).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/search']);
+        this.router.navigate(['/']);
         this.notificationService.show('User registered successfully.', 'success');
       },
       error: (err) => {
