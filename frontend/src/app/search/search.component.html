@@ -29,7 +29,7 @@
   </form>
 
   <!-- Error Message -->
-  <div *ngIf="errorMessage" class="alert alert-warning">{{ errorMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
   <!-- Scrollable Artist List -->
   <div class="scroll-container d-flex overflow-auto">
@@ -227,7 +227,7 @@
               />
 
               <div class="artist-card-body flex-grow-1 px-3 py-3">
-                <p class="fw-medium mb-0">
+                <p class="fw-medium mb-0 text-center">
                   {{ artwork.title }}, {{ artwork.date }}
                 </p>
               </div>

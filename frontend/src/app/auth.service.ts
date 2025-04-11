@@ -58,6 +58,9 @@ export class AuthService {
       { withCredentials: true }
     ).pipe(
       switchMap(() => this.fetchProfile()),
+      tap(() => {
+        this.notificationService.show('Login successful', 'success'); 
+      }),
       map(() => true),
       catchError(error => {
         throw new Error(error.error.message || 'Login failed');
