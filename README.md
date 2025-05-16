@@ -1,4 +1,4 @@
-# 🎨 Artsy Search App – CSCI 571 Homework 3
+# 🎨 Artist Search Web Application
 
 This is a full-stack web application for artist discovery using the Artsy API. It supports user authentication, favorites, and detailed artist/artwork views.
 
