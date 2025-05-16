@@ -13,7 +13,6 @@ This is a full-stack web application for artist discovery using the Artsy API. I
 ├── db.js                   # MongoDB connection
 ├── frontend/               # Angular source code
 ├── index.js                # Express backend entry point
-├── node_modules/
 ├── package.json
 ├── package-lock.json
 ```
