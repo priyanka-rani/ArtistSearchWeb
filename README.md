@@ -1,4 +1,4 @@
-# 🎨 Artist Search Web Application
+# 🎨 Artsy Search App – CSCI 571 Homework 3
 
 This is a full-stack web application for artist discovery using the Artsy API. It supports user authentication, favorites, and detailed artist/artwork views.
 
@@ -10,7 +10,6 @@ This is a full-stack web application for artist discovery using the Artsy API. I
 ## 📁 Project Structure
 
 ```
-.
 ├── db.js                   # MongoDB connection
 ├── frontend/               # Angular source code
 ├── index.js                # Express backend entry point
@@ -82,10 +81,3 @@ cd ..
 ```bash
 node index.js
 ```
-
-
-```bash
-gcloud app deploy
-```
-
----
