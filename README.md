@@ -11,7 +11,6 @@ This is a full-stack web application for artist discovery using the Artsy API. I
 
 ```
 .
-├── app.yaml                 # GCP deployment config
 ├── db.js                   # MongoDB connection
 ├── frontend/               # Angular source code
 ├── index.js                # Express backend entry point
@@ -19,8 +18,6 @@ This is a full-stack web application for artist discovery using the Artsy API. I
 ├── package.json
 ├── package-lock.json
 ```
-
-> ⚠️ Note: The `dist/` folder is generated automatically after building the Angular app.
 
 ---
 
@@ -86,11 +83,6 @@ cd ..
 node index.js
 ```
 
----
-
-## 🌐 Deployment (App Engine)
-
-Ensure `app.yaml` is configured properly. Then deploy using:
 
 ```bash
 gcloud app deploy
