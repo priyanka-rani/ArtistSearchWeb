@@ -285,7 +285,10 @@ app.get('/api/artworks/:artworkId/categories', async (req, res) => {
     });
 
     const categories = response.data._embedded.genes.map(gene => ({
+      id: gene.id,
       name: gene.name,
+      display_name: gene.display_name,
+      description: gene.description,
       image: gene._links?.thumbnail?.href || 'images/artsy_logo.svg'
     }));
 
